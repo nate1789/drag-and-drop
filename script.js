@@ -53,16 +53,18 @@ function updateSavedColumns() {
 
 // Create DOM Elements for each list item
 function createItemEl(columnEl, column, item, index) {
-  //console.log('columnEl:', columnEl);
-  //console.log('column:', column);
-  //console.log('item:', item);
-  //console.log('index:', index);
+	console.log('item:', item);
+  console.log('column:', column);
+  console.log('index:', index);
   // List Item
   const listEl = document.createElement('li');
   listEl.classList.add('drag-item');
   listEl.textContent = item;
   listEl.draggable = true;
   listEl.setAttribute('ondragstart', 'drag(event)');
+  listEl.contentEditable = true;
+  listEl.id = index;
+  listEl.setAttribute('onfocusout', `updateItem(${index}, ${column})`);
 	//Append
   columnEl.appendChild(listEl);
 }
@@ -97,6 +99,38 @@ function updateDOM() {
 
 	updatedOnLoad = true;
 	updateSavedColumns();
+}
+
+// Update Item - Delete if necessary, or update Array value
+function updateItem(id, column) {
+	const selectedArray = listArrays[column];
+	console.log(selectedArray);
+	const selectedColumnEl = listColumn[column].children;
+	console.log(selectedColumnEl[id].textContent);
+}
+
+// Add to Column List, Reset Textbox
+function addToColumn(column) {
+	const itemText = addItems[column].textContent;
+	const selectedArray = listArrays[column];
+	selectedArray.push(itemText);
+	addItems[column].textContent = '';
+	updateDOM();
+}
+
+// Show Add Item Input Box
+function showInputBox(column) {
+	addBtns[column].style.visibility = 'hidden';
+	saveItemBtns[column].style.display = 'flex';
+	addItemContainers[column].style.display = 'flex';
+}
+
+// Hide Item Input Box
+function hideInputBox(column) {
+	addBtns[column].style.visibility = 'visible';
+	saveItemBtns[column].style.display = 'none';
+	addItemContainers[column].style.display = 'none';
+	addToColumn(column);
 }
 
 // Allow arrays to reflect Drag and Drop Items
